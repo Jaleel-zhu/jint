@@ -1202,7 +1202,6 @@ internal static class WptBrowserExclusions
         new("dom/nodes/DOMImplementation-createDocumentType.html", "createDocumentType(\"~*", WptDivergence.NeedsTriage),
         new("dom/nodes/name-validation.html", "Valid and invalid characters in createElement.", WptDivergence.NeedsTriage),
         new("dom/nodes/name-validation.html", "Valid and invalid characters in createElementNS and createDocument.", WptDivergence.NeedsTriage),
-        new("dom/nodes/name-validation.html", "Valid and invalid characters in setAttribute, toggleAttribute, and createAttribute.", WptDivergence.NeedsTriage),
         new("dom/nodes/name-validation.html", "Valid and invalid characters in createDocumentType.", WptDivergence.NeedsTriage),
     ];
 
@@ -1232,9 +1231,6 @@ internal static class WptBrowserExclusions
         new("dom/nodes/Node-insertBefore.html", "*, must throw TypeError.", WptDivergence.NeedsTriage),
         new("dom/nodes/Node-replaceChild.html", "*a doctype should throw a HierarchyRequestError.", WptDivergence.NeedsTriage),
         new("dom/nodes/Node-replaceChild.html", "*node should throw a HierarchyRequestError.", WptDivergence.NeedsTriage),
-        // Both halves of the same fact, on toggleAttribute: `toggleAttribute("")` does not raise the
-        // InvalidCharacterError DOM §4.9 requires, and a name the standard allows is refused with one.
-        new("dom/nodes/attributes.html", "*toggleAttribute)", WptDivergence.NeedsTriage),
         new("dom/nodes/Document-createElementNS.html", "* XML document: \"http://example.com/\",\"0:a\",null", WptDivergence.NeedsTriage),
         new("dom/nodes/Document-createElementNS.html", "* XML document: \"http://example.com/\",\"a:̀\",null", WptDivergence.NeedsTriage),
         new("dom/nodes/Document-createElementNS.html", "* XML document: \"http://example.com/\",\"a:;\",null", WptDivergence.NeedsTriage),
@@ -1309,17 +1305,14 @@ internal static class WptBrowserExclusions
         // the same selector and outcome. The runner holds every pattern against passing and failing rows.
         new("dom/nodes/Element-matches.html", "*Undeclared namespace: ns|div*", WptDivergence.NeedsTriage),
         new("dom/nodes/Element-matches.html", "*Undeclared namespace: :not(ns|div)*", WptDivergence.NeedsTriage),
-        new("dom/nodes/Element-matches.html", "*Relative selector: >\\*", WptDivergence.NeedsTriage),
         new("dom/nodes/Element-matches.html", "*Attribute value selector, matching align attribute with value, unclosed bracket*", WptDivergence.NeedsTriage),
 
         new("dom/nodes/Element-webkitMatchesSelector.html", "*Undeclared namespace: ns|div*", WptDivergence.NeedsTriage),
         new("dom/nodes/Element-webkitMatchesSelector.html", "*Undeclared namespace: :not(ns|div)*", WptDivergence.NeedsTriage),
-        new("dom/nodes/Element-webkitMatchesSelector.html", "*Relative selector: >\\*", WptDivergence.NeedsTriage),
         new("dom/nodes/Element-webkitMatchesSelector.html", "*Attribute value selector, matching align attribute with value, unclosed bracket*", WptDivergence.NeedsTriage),
 
         new("dom/nodes/ParentNode-querySelector-All.html", "*Undeclared namespace: ns|div*", WptDivergence.NeedsTriage),
         new("dom/nodes/ParentNode-querySelector-All.html", "*Undeclared namespace: :not(ns|div)*", WptDivergence.NeedsTriage),
-        new("dom/nodes/ParentNode-querySelector-All.html", "*Relative selector: >\\*", WptDivergence.NeedsTriage),
         new("dom/nodes/ParentNode-querySelector-All.html", "*Attribute value selector, matching align attribute with value, unclosed bracket*", WptDivergence.NeedsTriage),
         new("dom/nodes/ParentNode-querySelector-All.html", "*Namespace selector, matching div elements in no namespace only*", WptDivergence.NeedsTriage),
         new("dom/nodes/ParentNode-querySelector-All.html", "*Namespace selector, matching any elements in no namespace only*", WptDivergence.NeedsTriage),

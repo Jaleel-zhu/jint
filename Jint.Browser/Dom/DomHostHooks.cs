@@ -354,7 +354,7 @@ internal class DomHostHooks
     /// scope-match a selectors string".
     /// </summary>
     /// <remarks>
-    /// AngleSharp's answer is already a snapshot, so this hook corrects no behaviour. What it does is put the
+    /// AngleSharp's answer is already a snapshot. Besides validating DOM's selector-list entry, this puts the
     /// standard's word "static" where the binding can act on it: the result is projected through
     /// <c>DomRealm.WrapStaticNodeList</c>, whose <see cref="Collections.DomStaticNodeList"/> makes staticness
     /// a property of the type rather than a guess about an <c>INodeList</c> — which is what lets that
@@ -363,9 +363,18 @@ internal class DomHostHooks
     /// </remarks>
     internal virtual JsValue QuerySelectorAll(DomRealm realm, INode root, JsValue[] arguments)
     {
-        var selectors = DomConvert.RequiredText(arguments, 0, Member(root, "querySelectorAll"));
+        var selectors = DomSelectorText.Required(arguments, Member(root, "querySelectorAll"));
         return realm.WrapStaticNodeList(((IParentNode) root).QuerySelectorAll(selectors));
     }
+
+    internal virtual JsValue QuerySelector(DomRealm realm, INode root, JsValue[] arguments)
+        => realm.WrapNodeValue(((IParentNode) root).QuerySelector(DomSelectorText.Required(arguments, Member(root, "querySelector"))));
+
+    internal virtual JsValue Matches(DomRealm realm, IElement element, JsValue[] arguments)
+        => DomConvert.Bool(element.Matches(DomSelectorText.Required(arguments, "Element.matches")));
+
+    internal virtual JsValue Closest(DomRealm realm, IElement element, JsValue[] arguments)
+        => realm.WrapNodeValue(element.Closest(DomSelectorText.Required(arguments, "Element.closest")));
 
     private static string Member(INode root, string operation)
         => root switch
@@ -502,11 +511,12 @@ internal class DomHostHooks
     internal virtual JsValue TagName(DomRealm realm, IElement element)
     {
         var qualified = QualifiedName(element);
-        return JsString.Create(
-            string.Equals(element.NamespaceUri, NamespaceNames.HtmlUri, StringComparison.Ordinal)
+        return string.Equals(element.NamespaceUri, NamespaceNames.HtmlUri, StringComparison.Ordinal)
             && element.Owner is IHtmlDocument
-                ? AsciiUppercase(qualified)
-                : qualified);
+                // Memoized per realm: the transform is a pure function of the qualified name, and this is
+                // the branch every repeated read of an HTML element's tagName/nodeName takes.
+                ? realm.HtmlUppercasedTagName(qualified)
+                : JsString.Create(qualified);
     }
 
     /// <summary>
@@ -523,7 +533,14 @@ internal class DomHostHooks
     internal virtual JsValue NodeName(DomRealm realm, INode node)
         => node is IElement element ? TagName(realm, element) : JsString.Create(node.NodeName);
 
-    private static string AsciiUppercase(string value)
+    /// <summary>
+    /// ASCII-uppercases <paramref name="value"/>: only the bytes <c>a</c>-<c>z</c> move, deliberately not
+    /// <see cref="string.ToUpperInvariant"/>'s culture-aware casing, because
+    /// <a href="https://infra.spec.whatwg.org/#ascii-uppercase">HTML's ASCII-uppercase</a> is what
+    /// <see cref="TagName"/> and <see cref="DomRealm.HtmlUppercasedTagName"/> need. Internal rather than
+    /// private so the per-realm memo can call it on a cache miss without duplicating it.
+    /// </summary>
+    internal static string AsciiUppercase(string value)
     {
         char[]? copy = null;
         for (var i = 0; i < value.Length; i++)
