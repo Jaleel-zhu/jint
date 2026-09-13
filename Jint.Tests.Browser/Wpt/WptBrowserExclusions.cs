@@ -1202,7 +1202,6 @@ internal static class WptBrowserExclusions
         new("dom/nodes/DOMImplementation-createDocumentType.html", "createDocumentType(\"~*", WptDivergence.NeedsTriage),
         new("dom/nodes/name-validation.html", "Valid and invalid characters in createElement.", WptDivergence.NeedsTriage),
         new("dom/nodes/name-validation.html", "Valid and invalid characters in createElementNS and createDocument.", WptDivergence.NeedsTriage),
-        new("dom/nodes/name-validation.html", "Valid and invalid characters in setAttribute, toggleAttribute, and createAttribute.", WptDivergence.NeedsTriage),
         new("dom/nodes/name-validation.html", "Valid and invalid characters in createDocumentType.", WptDivergence.NeedsTriage),
     ];
 
@@ -1232,9 +1231,6 @@ internal static class WptBrowserExclusions
         new("dom/nodes/Node-insertBefore.html", "*, must throw TypeError.", WptDivergence.NeedsTriage),
         new("dom/nodes/Node-replaceChild.html", "*a doctype should throw a HierarchyRequestError.", WptDivergence.NeedsTriage),
         new("dom/nodes/Node-replaceChild.html", "*node should throw a HierarchyRequestError.", WptDivergence.NeedsTriage),
-        // Both halves of the same fact, on toggleAttribute: `toggleAttribute("")` does not raise the
-        // InvalidCharacterError DOM §4.9 requires, and a name the standard allows is refused with one.
-        new("dom/nodes/attributes.html", "*toggleAttribute)", WptDivergence.NeedsTriage),
         new("dom/nodes/Document-createElementNS.html", "* XML document: \"http://example.com/\",\"0:a\",null", WptDivergence.NeedsTriage),
         new("dom/nodes/Document-createElementNS.html", "* XML document: \"http://example.com/\",\"a:̀\",null", WptDivergence.NeedsTriage),
         new("dom/nodes/Document-createElementNS.html", "* XML document: \"http://example.com/\",\"a:;\",null", WptDivergence.NeedsTriage),
